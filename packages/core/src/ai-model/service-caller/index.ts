@@ -247,6 +247,10 @@ export async function call(
   const debugCall = getDebug('ai:call');
   const debugProfileStats = getDebug('ai:profile:stats');
   const debugProfileDetail = getDebug('ai:profile:detail');
+  const debugCallInputOutput = getDebug('ai:original:call:input:output');
+  const debugCallReasoning = getDebug('ai:original:call:reasoning');
+
+  debugCallInputOutput(`AI Model Call Input: ${JSON.stringify(messages, null, 2)}`);
 
   const startTime = Date.now();
   const model = getModelName();
@@ -299,6 +303,14 @@ export async function call(
       `invalid response from LLM service: ${JSON.stringify(result)}`,
     );
     content = result.choices[0].message.content!;
+
+    debugCallInputOutput(`AI Model Call Output: ${JSON.stringify(result, null, 2)}`);
+
+    // 如果是vlm-ui-tars模型，输出reasoning_content调试日志
+    const reasoningContent = (result.choices?.[0]?.message as any)?.reasoning_content;
+    if (vlLocateMode() === 'vlm-ui-tars' && reasoningContent) {
+      debugCallReasoning(`AI Model Call Reasoning: ${reasoningContent}\n`);
+    }
 
     debugCall(`response: ${content}`);
     assert(content, 'empty content');
