@@ -250,7 +250,7 @@ export async function call(
   const debugCallInputOutput = getDebug('ai:original:call:input:output');
   const debugCallReasoning = getDebug('ai:original:call:reasoning');
 
-  debugCallInputOutput(`AI Model Call Input: ${JSON.stringify(messages, null, 2)}`);
+  debugCallInputOutput(`AI Model Call Input: ${JSON.stringify(messages)}`);
 
   const startTime = Date.now();
   const model = getModelName();
@@ -304,7 +304,7 @@ export async function call(
     );
     content = result.choices[0].message.content!;
 
-    debugCallInputOutput(`AI Model Call Output: ${JSON.stringify(result, null, 2)}`);
+    debugCallInputOutput(`AI Model Call Output: ${JSON.stringify(result)}`);
 
     // 如果是vlm-ui-tars模型，输出reasoning_content调试日志
     const reasoningContent = (result.choices?.[0]?.message as any)?.reasoning_content;
